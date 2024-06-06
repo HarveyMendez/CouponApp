@@ -114,7 +114,7 @@ const HomePage = () => {
 
   useEffect(() => {
     fetchCupones();
-  }, [user]);
+  }, [user] [fetchCupones]);
 
   return (
     <div>
