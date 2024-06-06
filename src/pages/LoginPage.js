@@ -14,7 +14,7 @@ const LoginPage = () => {
     setError(null);
     try {
       await login(username, password);
-      navigate('/');
+      navigate('/dashboard');
     } catch (error) {
       setError('Credenciales incorrectas');
     }
