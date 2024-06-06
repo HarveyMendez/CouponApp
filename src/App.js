@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'; // Agrega Navigate
 import HomePage from './pages/HomePage';
 import CompanyProfilePage from './pages/CompanyProfilePage';
 import LoginPage from './pages/LoginPage';
@@ -12,7 +12,10 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<PrivateRoute><HomePage /></PrivateRoute>} />
+          {/* Cambia la ruta de "/" para que apunte al componente de inicio de sesión */}
+          <Route path="/couponApp/login" element={<Navigate to="/login" />} />
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/dashboard" element={<PrivateRoute><HomePage /></PrivateRoute>} /> {/* Puedes cambiar esto si deseas */}
           <Route path="/profile" element={<PrivateRoute><CompanyProfilePage /></PrivateRoute>} />
         </Routes>
       </Router>
