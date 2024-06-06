@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/couponAppReact/static/css/main.e6c13ad2.css",
+    "main.js": "/couponAppReact/static/js/main.ef87c5f1.js",
+    "index.html": "/couponAppReact/index.html",
+    "main.e6c13ad2.css.map": "/couponAppReact/static/css/main.e6c13ad2.css.map",
+    "main.ef87c5f1.js.map": "/couponAppReact/static/js/main.ef87c5f1.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.ef87c5f1.js"
+  ]
+}
