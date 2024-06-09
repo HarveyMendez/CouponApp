@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const Modal = ({ isOpen, onClose, user, fetchCupones}) => {
+const Modal = ({ isOpen, onClose, user, categorias}) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     
@@ -15,7 +15,6 @@ const Modal = ({ isOpen, onClose, user, fetchCupones}) => {
     });
 
     data['nombre_usuario'] = user;
-    data['id']= '5';
  
 
     try {
@@ -31,7 +30,6 @@ const Modal = ({ isOpen, onClose, user, fetchCupones}) => {
         throw new Error('Error al agregar el cupón');
       }
 
-      fetchCupones();
 
     } catch (error) {
       console.error('Error al enviar la solicitud POST:', error);
@@ -67,7 +65,13 @@ const Modal = ({ isOpen, onClose, user, fetchCupones}) => {
           </select><br/>
 
           <label htmlFor="categoria">Categoría:</label>
-          <input type="text" id="categoria" name="categoria" required/><br/>
+            
+          <select id="categoria" name="categoria">
+        {/* Usando map para crear opciones */}
+        {categorias.map(categoria => (
+          <option key={categoria.id} value={categoria.id}>{categoria.nombreCategoria}</option>
+        ))}
+      </select>
 
           <label htmlFor="cantidad">Cantidad:</label>
           <input type="number" id="cantidad" name="cantidad" required/><br/>
@@ -79,6 +83,65 @@ const Modal = ({ isOpen, onClose, user, fetchCupones}) => {
   );
 };
 
+const Modal2 = ({ isOpen, onClose, cupon, categorias}) => {
+
+  const handleSubmit = async (event) => {
+    console.log("");
+  };
+
+  const [inputValue, setInputValue] = useState('Valor predeterminado');
+
+  const handleChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+
+  if (!isOpen) return null;
+  return (
+    <div className="modal-overlay">
+      <div className="modal">
+        <h2>Actualizar informacion del {cupon.nombre}</h2>
+        <button onClick={onClose} className="modal-close-button">Cerrar</button>
+        
+        <form id="cuponForm" onSubmit={handleSubmit}>
+          <label htmlFor="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" value={cupon.nombre} onChange={handleChange} required/><br/>
+
+          <label htmlFor="fechaInicio">Fecha de Inicio:</label>
+          <input type="datetime-local" id="fechaInicio" value={cupon.fecha_inicio} onChange={handleChange} name="fechaInicio" required/><br/>
+
+          <label htmlFor="fechaVencimiento">Fecha de Vencimiento:</label>
+          <input type="datetime-local" id="fechaVencimiento" value={cupon.fecha_vencimiento} onChange={handleChange} name="fechaVencimiento" required/><br/>
+
+          <label htmlFor="precio">Precio:</label>
+          <input type="number" id="precio" name="precio" value={cupon.precio} onChange={handleChange} step="0.01" required/><br/>
+
+          <label htmlFor="estado">Estado:</label>
+          <select id="estado" name="estado" value={cupon.estado} onChange={handleChange}>
+            <option value="1">Activo</option>
+            <option value="0">Inactivo</option>
+          </select><br/>
+
+          <label htmlFor="categoria">Categoría:</label>
+          <select id="categoria" name="categoria" value={cupon.categoria}>
+        {/* Usando map para crear opciones */}
+        {categorias.map(categoria => (
+          <option key={categoria.id} value={categoria.id}>{categoria.nombreCategoria}</option>
+        ))}
+      </select>
+
+          <label htmlFor="cantidad">Cantidad:</label>
+          <input type="number" id="cantidad" name="cantidad" value={cupon.cantidad} onChange={handleChange} required/><br/>
+
+          <button type="submit">Actualizar Cupon</button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+
+
 const HomePage = () => {
   const [cupones, setCupones] = useState([]);
 
@@ -86,8 +149,14 @@ const HomePage = () => {
 
   const { user } = useAuth();
 
+  const [cuponSeleccionado, setCuponSeleccionado] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
+
+  const [categorias, setCategorias] = useState([]);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -97,9 +166,21 @@ const HomePage = () => {
     setIsModalOpen(false);
   };
 
+  const openSecondModal = () => {
+    setIsSecondModalOpen(true);
+  };
+
+  const closeSecondModal = () => {
+    setIsSecondModalOpen(false);
+  };
+
   const handleVerActualizarCupon = (cuponId) => {
-    // Aquí puedes agregar la lógica para ver y actualizar la información del cupón
-    console.log('Ver/Actualizar cupón con ID:', cuponId);
+    // Encuentra el cupón seleccionado por su ID
+    const cupon = cupones.find(cupon => cupon.id === cuponId);
+    // Actualiza el estado con el cupón seleccionado
+    setCuponSeleccionado(cupon);
+    // Abre el segundo modal
+    openSecondModal();
   };
 
   const fetchCupones = async () => {
@@ -112,23 +193,37 @@ const HomePage = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`https://couponapi2.azurewebsites.net/index.php/getCategories`);
+      const data = await response.json();
+      setCategorias(data);
+      console.log(categorias);
+    } catch (error) {
+      console.error('Error al obtener las categorias:', error);
+    }
+  };
+
   useEffect(() => {
     fetchCupones();
-  }, [user] [fetchCupones]);
+    fetchCategories();
+  }, []);
 
   return (
     <div>
-      <h1>Listado de Cupones</h1>
+      <h1>Usuario: {user}</h1>
+      <h2>Listado de Cupones</h2>
       <button onClick={openModal}>Agregar Nuevo Cupón</button>
+      <button onClick={fetchCupones}>Actualizar tabla</button>
       {/* Aquí colocarías tu tabla de cupones */}
-      <Modal isOpen={isModalOpen} onClose={closeModal} user={user} fetchCupones={fetchCupones}/>
+      <Modal isOpen={isModalOpen} onClose={closeModal} user={user} categorias={categorias} />
       <table>
         <thead>
           <tr>
             <th>Nombre del Cupón</th>
-            <th>Descripción</th>
             <th>Estado</th>
             <th>Acciones</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -144,6 +239,10 @@ const HomePage = () => {
           ))}
         </tbody>
       </table>
+      {/* Renderizar el segundo modal solo si hay un cupón seleccionado */}
+      {cuponSeleccionado && (
+        <Modal2 isOpen={isSecondModalOpen} onClose={closeSecondModal} cupon={cuponSeleccionado} categorias={categorias} />
+      )}
       <Link to="/profile">Ir al Perfil de la Empresa</Link>
       <button onClick={logout}>Cerrar Sesión</button>
     </div>
