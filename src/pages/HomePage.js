@@ -29,8 +29,6 @@ const Modal = ({ isOpen, onClose, user, categorias}) => {
       if (!response.ok) {
         throw new Error('Error al agregar el cupón');
       }
-
-
     } catch (error) {
       console.error('Error al enviar la solicitud POST:', error);
     }
@@ -64,6 +62,9 @@ const Modal = ({ isOpen, onClose, user, categorias}) => {
             <option value="0">Inactivo</option>
           </select><br/>
 
+          <label htmlFor="descuento">Descuento: </label>
+          <input type="number" id="descuento" name="descuento" required/><br/>
+
           <label htmlFor="categoria">Categoría:</label>
             
           <select id="categoria" name="categoria">
@@ -83,7 +84,8 @@ const Modal = ({ isOpen, onClose, user, categorias}) => {
   );
 };
 
-const Modal2 = ({ isOpen, onClose, cupon, categorias}) => {
+
+const Modal2 = ({ isOpen, onClose, cupon, categorias, user }) => {
   const [formData, setFormData] = useState({
     nombre: cupon.nombre,
     fechaInicio: cupon.fecha_inicio,
@@ -91,12 +93,46 @@ const Modal2 = ({ isOpen, onClose, cupon, categorias}) => {
     precio: cupon.precio,
     estado: cupon.estado,
     categoria: cupon.categoria,
+    descuento: cupon.descuento,
     cantidad: cupon.cantidad
   });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Formulario enviado:", formData);
+
+    const data = {
+      nombre: String(formData.nombre),
+      fechaInicio: String(formData.fechaInicio),
+      fechaVencimiento: String(formData.fechaVencimiento),
+      precio: String(formData.precio),
+      estado: String(formData.estado),
+      categoria: String(formData.categoria),
+      descuento: String(formData.descuento),
+      cantidad: String(formData.cantidad),
+      nombre_usuario: String(user)
+    };
+
+    try {
+      const response = await fetch('https://couponapi2.azurewebsites.net/index.php/updateCupon', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        throw new Error(`Error al actualizar el cupón: ${response.status} - ${errorDetails}`);
+      }
+
+      const result = await response.json();
+      alert('Cupón actualizado exitosamente');
+
+    } catch (error) {
+      console.error('Error en la solicitud fetch:', error.message);
+      
+    }
   };
 
   const handleChange = (event) => {
@@ -107,15 +143,14 @@ const Modal2 = ({ isOpen, onClose, cupon, categorias}) => {
     });
   };
 
-  // Esta función se ejecutará cada vez que cambie el valor de 'cupon'
   useEffect(() => {
-    // Actualizamos el estado local con los nuevos valores del cupón
     setFormData({
       nombre: cupon.nombre,
       fechaInicio: cupon.fecha_inicio,
       fechaVencimiento: cupon.fecha_vencimiento,
       precio: cupon.precio,
       estado: cupon.estado,
+      descuento: cupon.descuento,
       categoria: cupon.categoria,
       cantidad: cupon.cantidad
     });
@@ -131,16 +166,16 @@ const Modal2 = ({ isOpen, onClose, cupon, categorias}) => {
         
         <form id="cuponForm" onSubmit={handleSubmit}>
           <label htmlFor="nombre">Nombre:</label>
-          <input type="text" id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} required/><br/>
+          <input type="text" id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} required /><br/>
 
           <label htmlFor="fechaInicio">Fecha de Inicio:</label>
-          <input type="datetime-local" id="fechaInicio" name="fechaInicio" value={formData.fechaInicio} onChange={handleChange} required/><br/>
+          <input type="datetime-local" id="fechaInicio" name="fechaInicio" value={formData.fechaInicio} onChange={handleChange} required /><br/>
 
           <label htmlFor="fechaVencimiento">Fecha de Vencimiento:</label>
-          <input type="datetime-local" id="fechaVencimiento" name="fechaVencimiento" value={formData.fechaVencimiento} onChange={handleChange} required/><br/>
+          <input type="datetime-local" id="fechaVencimiento" name="fechaVencimiento" value={formData.fechaVencimiento} onChange={handleChange} required /><br/>
 
           <label htmlFor="precio">Precio:</label>
-          <input type="number" id="precio" name="precio" value={formData.precio} onChange={handleChange} step="0.01" required/><br/>
+          <input type="number" id="precio" name="precio" value={formData.precio} onChange={handleChange} step="0.01" required /><br/>
 
           <label htmlFor="estado">Estado:</label>
           <select id="estado" name="estado" value={formData.estado} onChange={handleChange}>
@@ -148,16 +183,18 @@ const Modal2 = ({ isOpen, onClose, cupon, categorias}) => {
             <option value="0">Inactivo</option>
           </select><br/>
 
+          <label htmlFor="descuento">Descuento: </label>
+          <input type="number" id="descuento" name="descuento" value={formData.descuento} onChange={handleChange} required /><br/>
+
           <label htmlFor="categoria">Categoría:</label>
           <select id="categoria" name="categoria" value={formData.categoria} onChange={handleChange}>
-            {/* Usando map para crear opciones */}
             {categorias.map(categoria => (
               <option key={categoria.id} value={categoria.id}>{categoria.nombreCategoria}</option>
             ))}
           </select><br/>
 
           <label htmlFor="cantidad">Cantidad:</label>
-          <input type="number" id="cantidad" name="cantidad" value={formData.cantidad} onChange={handleChange} required/><br/>
+          <input type="number" id="cantidad" name="cantidad" value={formData.cantidad} onChange={handleChange} required /><br/>
 
           <button type="submit">Actualizar Cupón</button>
         </form>
@@ -224,7 +261,6 @@ const HomePage = () => {
       const response = await fetch(`https://couponapi2.azurewebsites.net/index.php/getCategories`);
       const data = await response.json();
       setCategorias(data);
-      console.log(categorias);
     } catch (error) {
       console.error('Error al obtener las categorias:', error);
     }
@@ -267,7 +303,7 @@ const HomePage = () => {
       </table>
       {/* Renderizar el segundo modal solo si hay un cupón seleccionado */}
       {cuponSeleccionado && (
-        <Modal2 isOpen={isSecondModalOpen} onClose={closeSecondModal} cupon={cuponSeleccionado} categorias={categorias} />
+        <Modal2 isOpen={isSecondModalOpen} onClose={closeSecondModal} cupon={cuponSeleccionado} categorias={categorias} user={user} />
       )}
       <Link to="/profile">Ir al Perfil de la Empresa</Link>
       <button onClick={logout}>Cerrar Sesión</button>
