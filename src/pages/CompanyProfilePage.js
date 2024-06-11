@@ -1,25 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ProfileForm from '../components/ProfileForm';
+import { useAuth } from '../context/AuthContext';
 
 const CompanyProfilePage = () => {
-  
+  const { user } = useAuth();
   const [empresaData, setEmpresaData] = useState({
-    nombre: '',
-    direccion: '',
+    nombre_empresa: '',
+    direccion_fisica: '',
     cedula: '',
-    fechaCreacion: '',
-    email: '',
+    fecha_creacion: '',
+    correo_electronico: '',
     telefono: '',
-    password: ''
+    contrasena: '',
+    ubicacion: '',
+    estado: ''
   });
+  const [loading, setLoading] = useState(true);
 
+  const fetchBusiness = async () => {
+    try {
+      const response = await fetch(`https://couponapi2.azurewebsites.net/index.php/getBusiness?usuarioEmpresa=${user}`);
+      const data = await response.json();
+      if (data.length > 0) {
+        setEmpresaData(data[0]);
+        console.log(empresaData);
+      }
+      setLoading(false); 
+    } catch (error) {
+      console.error('Error al obtener los datos:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBusiness();
+  }, []);
 
   return (
     <div>
       <h1>Perfil de la Empresa</h1>
-      <ProfileForm empresaData={empresaData} setEmpresaData={setEmpresaData} />
-      <Link to="/dashboard">Ir a gestion de cupones</Link>
+      {loading ? (
+        <p>Cargando...</p>
+      ) : (
+        <>
+          <ProfileForm empresaData={empresaData} setEmpresaData={setEmpresaData} user={user} />
+          <Link to="/dashboard">Ir a gestion de cupones</Link>
+        </>
+      )}
     </div>
   );
 };

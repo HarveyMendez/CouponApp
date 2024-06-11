@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-const ProfileForm = ({ empresaData, setEmpresaData }) => {
+const ProfileForm = ({ empresaData, setEmpresaData, user }) => {
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEmpresaData({ ...empresaData, [name]: value });
@@ -8,69 +9,103 @@ const ProfileForm = ({ empresaData, setEmpresaData }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lógica para enviar los datos al servidor
-    console.log('Datos de la empresa enviados:', empresaData);
+    fetchBusiness();
+    
   };
+
+  const fetchBusiness = async () => {
+
+    const data = empresaData;
+    data['nombre_usuario'] = user;
+
+    try {
+      const response = await fetch('https://couponapi2.azurewebsites.net/index.php/updateBusiness', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        console.log("error");
+      }
+
+      const result = await response.json();
+      alert('Informacion actualizada exitosamente');
+
+    } catch (error) {
+      
+    }
+  };
+
+  
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="nombre"
-        value={empresaData.nombre}
-        onChange={handleChange}
-        placeholder="Nombre de la empresa"
-        required
-      />
-      <input
-        type="text"
-        name="direccion"
-        value={empresaData.direccion}
-        onChange={handleChange}
-        placeholder="Dirección física"
-        required
-      />
-      <input
-        type="text"
-        name="cedula"
-        value={empresaData.cedula}
-        onChange={handleChange}
-        placeholder="Cédula física o jurídica"
-        required
-      />
-      <input
-        type="text"
-        name="fechaCreacion"
-        value={empresaData.fechaCreacion}
-        onChange={handleChange}
-        placeholder="Fecha de creación"
-        required
-      />
-      <input
-        type="email"
-        name="email"
-        value={empresaData.email}
-        onChange={handleChange}
-        placeholder="Correo electrónico"
-        required
-      />
-      <input
-        type="tel"
-        name="telefono"
-        value={empresaData.telefono}
-        onChange={handleChange}
-        placeholder="Teléfono"
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        value={empresaData.password}
-        onChange={handleChange}
-        placeholder="Contraseña"
-        required
-      />
-      <button type="submit">Guardar</button>
+      {empresaData && (
+        <>
+          <input
+            type="text"
+            name="nombre_empresa"
+            value={empresaData.nombre_empresa}
+            onChange={handleChange}
+            placeholder="Nombre de la empresa"
+            
+          />
+          <input
+            type="text"
+            name="direccion_fisica"
+            value={empresaData.direccion_fisica}
+            onChange={handleChange}
+            placeholder="Dirección física"
+            
+          />
+          <input
+            type="text"
+            name="cedula"
+            value={empresaData.cedula}
+            onChange={handleChange}
+            placeholder="Cédula física o jurídica"
+            
+          />
+          <input
+            type="email"
+            name="correo_electronico"
+            value={empresaData.correo_electronico}
+            onChange={handleChange}
+            placeholder="Correo electrónico"
+            
+          />
+          <input
+            type="tel"
+            name="telefono"
+            value={empresaData.telefono}
+            onChange={handleChange}
+            placeholder="Teléfono"
+            
+          />
+          {/* 
+          <input
+            type="password"
+            name="password"
+            value={empresa.contrasena}
+            onChange={handleChange}
+            placeholder="Contraseña"
+            
+          />
+          */}
+          <input
+            type="text"
+            name="ubicacion"
+            value={empresaData.ubicacion}
+            onChange={handleChange}
+            placeholder="Ubicación"
+            
+          />
+          <button type="submit">Guardar</button>
+        </>
+      )}
     </form>
   );
 };
