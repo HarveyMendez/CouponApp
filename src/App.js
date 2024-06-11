@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import HomePage from './pages/HomePage';
 import CompanyProfilePage from './pages/CompanyProfilePage';
 import LoginPage from './pages/LoginPage';
+import ChangePasswordPage from './pages/ChangePasswordPage';
 import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -14,6 +15,7 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/dashboard" element={<PrivateRoute><HomePage /></PrivateRoute>} />
+          <Route path="/changePassword" element={<ChangePasswordPage />} />
           <Route path="/profile" element={<PrivateRoute><CompanyProfilePage /></PrivateRoute>} />
         </Routes>
       </Router>

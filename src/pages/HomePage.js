@@ -84,56 +84,82 @@ const Modal = ({ isOpen, onClose, user, categorias}) => {
 };
 
 const Modal2 = ({ isOpen, onClose, cupon, categorias}) => {
+  const [formData, setFormData] = useState({
+    nombre: cupon.nombre,
+    fechaInicio: cupon.fecha_inicio,
+    fechaVencimiento: cupon.fecha_vencimiento,
+    precio: cupon.precio,
+    estado: cupon.estado,
+    categoria: cupon.categoria,
+    cantidad: cupon.cantidad
+  });
 
   const handleSubmit = async (event) => {
-    console.log("");
+    event.preventDefault();
+    console.log("Formulario enviado:", formData);
   };
-
-  const [inputValue, setInputValue] = useState('Valor predeterminado');
 
   const handleChange = (event) => {
-    setInputValue(event.target.value);
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
   };
 
+  // Esta función se ejecutará cada vez que cambie el valor de 'cupon'
+  useEffect(() => {
+    // Actualizamos el estado local con los nuevos valores del cupón
+    setFormData({
+      nombre: cupon.nombre,
+      fechaInicio: cupon.fecha_inicio,
+      fechaVencimiento: cupon.fecha_vencimiento,
+      precio: cupon.precio,
+      estado: cupon.estado,
+      categoria: cupon.categoria,
+      cantidad: cupon.cantidad
+    });
+  }, [cupon]);
 
   if (!isOpen) return null;
+
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h2>Actualizar informacion del {cupon.nombre}</h2>
+        <h2>Actualizar información del {cupon.nombre}</h2>
         <button onClick={onClose} className="modal-close-button">Cerrar</button>
         
         <form id="cuponForm" onSubmit={handleSubmit}>
           <label htmlFor="nombre">Nombre:</label>
-          <input type="text" id="nombre" name="nombre" value={cupon.nombre} onChange={handleChange} required/><br/>
+          <input type="text" id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} required/><br/>
 
           <label htmlFor="fechaInicio">Fecha de Inicio:</label>
-          <input type="datetime-local" id="fechaInicio" value={cupon.fecha_inicio} onChange={handleChange} name="fechaInicio" required/><br/>
+          <input type="datetime-local" id="fechaInicio" name="fechaInicio" value={formData.fechaInicio} onChange={handleChange} required/><br/>
 
           <label htmlFor="fechaVencimiento">Fecha de Vencimiento:</label>
-          <input type="datetime-local" id="fechaVencimiento" value={cupon.fecha_vencimiento} onChange={handleChange} name="fechaVencimiento" required/><br/>
+          <input type="datetime-local" id="fechaVencimiento" name="fechaVencimiento" value={formData.fechaVencimiento} onChange={handleChange} required/><br/>
 
           <label htmlFor="precio">Precio:</label>
-          <input type="number" id="precio" name="precio" value={cupon.precio} onChange={handleChange} step="0.01" required/><br/>
+          <input type="number" id="precio" name="precio" value={formData.precio} onChange={handleChange} step="0.01" required/><br/>
 
           <label htmlFor="estado">Estado:</label>
-          <select id="estado" name="estado" value={cupon.estado} onChange={handleChange}>
+          <select id="estado" name="estado" value={formData.estado} onChange={handleChange}>
             <option value="1">Activo</option>
             <option value="0">Inactivo</option>
           </select><br/>
 
           <label htmlFor="categoria">Categoría:</label>
-          <select id="categoria" name="categoria" value={cupon.categoria}>
-        {/* Usando map para crear opciones */}
-        {categorias.map(categoria => (
-          <option key={categoria.id} value={categoria.id}>{categoria.nombreCategoria}</option>
-        ))}
-      </select>
+          <select id="categoria" name="categoria" value={formData.categoria} onChange={handleChange}>
+            {/* Usando map para crear opciones */}
+            {categorias.map(categoria => (
+              <option key={categoria.id} value={categoria.id}>{categoria.nombreCategoria}</option>
+            ))}
+          </select><br/>
 
           <label htmlFor="cantidad">Cantidad:</label>
-          <input type="number" id="cantidad" name="cantidad" value={cupon.cantidad} onChange={handleChange} required/><br/>
+          <input type="number" id="cantidad" name="cantidad" value={formData.cantidad} onChange={handleChange} required/><br/>
 
-          <button type="submit">Actualizar Cupon</button>
+          <button type="submit">Actualizar Cupón</button>
         </form>
       </div>
     </div>

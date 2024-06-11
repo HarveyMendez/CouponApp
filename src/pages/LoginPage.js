@@ -13,8 +13,22 @@ const LoginPage = () => {
     e.preventDefault();
     setError(null);
     try {
-      await login(username, password);
-      navigate('/dashboard');
+      await login(username, password)
+      .then(data => {
+        if (data.success === false) {
+          alert("Contraseña incorrecta");
+        } else if (data.changePass === true) {
+          alert("Primer Inicio de Sesion Detectado");
+          navigate('/changePassword')
+        } else if (data.success === true) {
+          alert("Inicio de Sesion Exitoso");
+          navigate('/dashboard');
+        }
+      })
+      .catch(error => {
+        console.error('Error inesperado:', error);
+      });
+      
     } catch (error) {
       setError('Credenciales incorrectas');
     }

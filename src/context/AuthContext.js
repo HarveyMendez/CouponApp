@@ -1,14 +1,14 @@
 import React, { createContext, useState, useContext } from 'react';
 
-// Crear el contexto
+
 const AuthContext = createContext();
 
-// Hook personalizado para usar el contexto
+
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-// Proveedor del contexto
+
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username: nombre_usuario, password: contrasenna }), // Asegúrate de que los nombres sean correctos
+        body: JSON.stringify({ username: nombre_usuario, password: contrasenna }),
       });
   
       if (!response.ok) {
@@ -31,18 +31,30 @@ export const AuthProvider = ({ children }) => {
   
       if (!data.nombre_usuario) {
         alert("Usuario no existe");
+        setIsAuthenticated(false);
       } else if (data.nombre_usuario === nombre_usuario) {
-        if (data.contrasena === contrasenna) {
-            alert("Inicio de Sesion Exitoso");
+        if (data.contrasena === contrasenna && data.token === 0) {
+            
             setUser(data.nombre_usuario);
             setIsAuthenticated(true);
-        } else {
-            alert("Contraseña incorrecta");
+            return { success: true };
+
+        } else if(data.contrasena === contrasenna && data.token === 1){
+            
+            setUser(data.nombre_usuario);
+            //setIsAuthenticated(true);
+            return { changePass: true };
+        } 
+        else {
+            
+            setIsAuthenticated(false);
+            return { success: false, message: data.message || 'Contraseña incorrecta' };
         }
       }
     } catch (error) {
       console.error('Error en la autenticación:', error);
       setIsAuthenticated(false);
+      return { success: false};
     }
   };
 
@@ -52,7 +64,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
