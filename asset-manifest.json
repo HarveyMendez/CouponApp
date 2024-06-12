@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/CouponApp/static/css/main.5a93d18e.css",
-    "main.js": "/CouponApp/static/js/main.027661ea.js",
+    "main.js": "/CouponApp/static/js/main.128a2595.js",
     "index.html": "/CouponApp/index.html",
     "main.5a93d18e.css.map": "/CouponApp/static/css/main.5a93d18e.css.map",
-    "main.027661ea.js.map": "/CouponApp/static/js/main.027661ea.js.map"
+    "main.128a2595.js.map": "/CouponApp/static/js/main.128a2595.js.map"
   },
   "entrypoints": [
     "static/css/main.5a93d18e.css",
-    "static/js/main.027661ea.js"
+    "static/js/main.128a2595.js"
   ]
 }
