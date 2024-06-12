@@ -219,7 +219,8 @@ const HomePage = () => {
   const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
 
   const [categorias, setCategorias] = useState([]);
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
+  
+  const [loading, setLoading] = useState(true);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -238,19 +239,21 @@ const HomePage = () => {
   };
 
   const handleVerActualizarCupon = (cuponId) => {
-    // Encuentra el cupón seleccionado por su ID
+    
     const cupon = cupones.find(cupon => cupon.id === cuponId);
-    // Actualiza el estado con el cupón seleccionado
+    
     setCuponSeleccionado(cupon);
-    // Abre el segundo modal
+    
     openSecondModal();
   };
 
   const fetchCupones = async () => {
+    setCupones([]);
     try {
       const response = await fetch(`https://couponapi2.azurewebsites.net/index.php/getCoupon?usuarioEmpresa=${user}`);
       const data = await response.json();
       setCupones(data);
+      setLoading(false);
     } catch (error) {
       console.error('Error al obtener los cupones:', error);
     }
@@ -277,9 +280,13 @@ const HomePage = () => {
       <h2>Listado de Cupones</h2>
       <button onClick={openModal}>Agregar Nuevo Cupón</button>
       <button onClick={fetchCupones}>Actualizar tabla</button>
-      {/* Aquí colocarías tu tabla de cupones */}
+      
       <Modal isOpen={isModalOpen} onClose={closeModal} user={user} categorias={categorias} />
-      <table>
+
+      {loading ? (
+        <p>Cargando...</p>
+      ) : (
+        <table>
         <thead>
           <tr>
             <th>Nombre del Cupón</th>
@@ -301,7 +308,9 @@ const HomePage = () => {
           ))}
         </tbody>
       </table>
-      {/* Renderizar el segundo modal solo si hay un cupón seleccionado */}
+      )}
+      
+      
       {cuponSeleccionado && (
         <Modal2 isOpen={isSecondModalOpen} onClose={closeSecondModal} cupon={cuponSeleccionado} categorias={categorias} user={user} />
       )}
