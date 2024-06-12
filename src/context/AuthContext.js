@@ -28,29 +28,39 @@ export const AuthProvider = ({ children }) => {
       }
   
       const data = await response.json();
-  
+
+      if (data.estado === 0) {
+        alert("Esta cuenta está deshabilitada");
+        setIsAuthenticated(false);
+        return;
+      }
+
       if (!data.nombre_usuario) {
         alert("Usuario no existe");
         setIsAuthenticated(false);
-      } else if (data.nombre_usuario === nombre_usuario) {
-        if (data.contrasena === contrasenna && data.token === 0) {
-            
-            setUser(data.nombre_usuario);
-            setIsAuthenticated(true);
-            return { success: true };
-
-        } else if(data.contrasena === contrasenna && data.token === 1){
-            
-            setUser(data.nombre_usuario);
-            //setIsAuthenticated(true);
-            return { changePass: true };
-        } 
-        else {
-            
-            setIsAuthenticated(false);
-            return { success: false, message: data.message || 'Contraseña incorrecta' };
-        }
+        return;
       }
+
+      if (data.nombre_usuario !== nombre_usuario) {
+        return;
+      }
+
+      if (data.contrasena === contrasenna) {
+        if (data.token === 0) {
+          setUser(data.nombre_usuario);
+          setIsAuthenticated(true);
+          return { success: true };
+        } else if (data.token === 1) {
+          setUser(data.nombre_usuario);
+          // setIsAuthenticated(true);
+          return { changePass: true };
+        }
+      } else {
+        setIsAuthenticated(false);
+        return { success: false, message: data.message || 'Contraseña incorrecta' };
+      }
+  
+      
     } catch (error) {
       console.error('Error en la autenticación:', error);
       setIsAuthenticated(false);
