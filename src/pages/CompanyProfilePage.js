@@ -24,7 +24,6 @@ const CompanyProfilePage = () => {
       const data = await response.json();
       if (data.length > 0) {
         setEmpresaData(data[0]);
-        console.log(empresaData);
       }
       setLoading(false); 
     } catch (error) {
@@ -44,7 +43,8 @@ const CompanyProfilePage = () => {
       ) : (
         <>
           <ProfileForm empresaData={empresaData} setEmpresaData={setEmpresaData} user={user} />
-          <Link to="/dashboard">Ir a gestion de cupones</Link>
+          <button><Link to="/dashboard">Ir a gestion de cupones</Link></button>
+          
         </>
       )}
     </div>

@@ -45,6 +45,7 @@ const ProfileForm = ({ empresaData, setEmpresaData, user }) => {
     <form onSubmit={handleSubmit}>
       {empresaData && (
         <>
+          <label>Nombre Empresa</label>
           <input
             type="text"
             name="nombre_empresa"
@@ -53,6 +54,7 @@ const ProfileForm = ({ empresaData, setEmpresaData, user }) => {
             placeholder="Nombre de la empresa"
             
           />
+          <label>Dirección fisíca</label>
           <input
             type="text"
             name="direccion_fisica"
@@ -61,6 +63,7 @@ const ProfileForm = ({ empresaData, setEmpresaData, user }) => {
             placeholder="Dirección física"
             
           />
+          <label>Cedula</label>
           <input
             type="text"
             name="cedula"
@@ -69,6 +72,7 @@ const ProfileForm = ({ empresaData, setEmpresaData, user }) => {
             placeholder="Cédula física o jurídica"
             
           />
+          <label>Correo electrónico</label>
           <input
             type="email"
             name="correo_electronico"
@@ -77,8 +81,9 @@ const ProfileForm = ({ empresaData, setEmpresaData, user }) => {
             placeholder="Correo electrónico"
             
           />
+          <label>Telefono</label>
           <input
-            type="tel"
+            type="number"
             name="telefono"
             value={empresaData.telefono}
             onChange={handleChange}
@@ -95,6 +100,7 @@ const ProfileForm = ({ empresaData, setEmpresaData, user }) => {
             
           />
           */}
+          <label>Ubicacíon</label>
           <input
             type="text"
             name="ubicacion"

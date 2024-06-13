@@ -25,6 +25,7 @@ const Modal = ({ isOpen, onClose, user, categorias}) => {
         },
         body: JSON.stringify(data)
       });
+      alert("Cupon agregado");
 
       if (!response.ok) {
         throw new Error('Error al agregar el cupón');
@@ -38,8 +39,9 @@ const Modal = ({ isOpen, onClose, user, categorias}) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div id="modal" class="modal">
+      <div class="modal-content">
+      
         <h2>Formulario para Añadir Cupón</h2>
         <button onClick={onClose} className="modal-close-button">Cerrar</button>
         
@@ -77,8 +79,12 @@ const Modal = ({ isOpen, onClose, user, categorias}) => {
           <label htmlFor="cantidad">Cantidad:</label>
           <input type="number" id="cantidad" name="cantidad" required/><br/>
 
+          <label htmlFor="image">Url imagen:</label>
+          <input type="text" id="image" name="image" required/><br/>
+
           <button type="submit">Añadir Cupón</button>
         </form>
+        
       </div>
     </div>
   );
@@ -86,6 +92,7 @@ const Modal = ({ isOpen, onClose, user, categorias}) => {
 
 
 const Modal2 = ({ isOpen, onClose, cupon, categorias, user }) => {
+  
   const [formData, setFormData] = useState({
     nombre: cupon.nombre,
     fechaInicio: cupon.fecha_inicio,
@@ -94,7 +101,8 @@ const Modal2 = ({ isOpen, onClose, cupon, categorias, user }) => {
     estado: cupon.estado,
     categoria: cupon.categoria,
     descuento: cupon.descuento,
-    cantidad: cupon.cantidad
+    cantidad: cupon.cantidad,
+    image: cupon.image
   });
 
   const handleSubmit = async (event) => {
@@ -109,7 +117,8 @@ const Modal2 = ({ isOpen, onClose, cupon, categorias, user }) => {
       categoria: String(formData.categoria),
       descuento: String(formData.descuento),
       cantidad: String(formData.cantidad),
-      nombre_usuario: String(user)
+      nombre_usuario: String(user),
+      image: String(formData.image)
     };
 
     try {
@@ -159,8 +168,8 @@ const Modal2 = ({ isOpen, onClose, cupon, categorias, user }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div id="modal" class="modal">
+      <div class="modal-content">
         <h2>Actualizar información del {cupon.nombre}</h2>
         <button onClick={onClose} className="modal-close-button">Cerrar</button>
         
@@ -195,6 +204,9 @@ const Modal2 = ({ isOpen, onClose, cupon, categorias, user }) => {
 
           <label htmlFor="cantidad">Cantidad:</label>
           <input type="number" id="cantidad" name="cantidad" value={formData.cantidad} onChange={handleChange} required /><br/>
+
+          <label htmlFor="image">Url imagen:</label>
+          <input type="text" id="image" name="image" value={formData.image} onChange={handleChange} required/><br/>
 
           <button type="submit">Actualizar Cupón</button>
         </form>
@@ -278,6 +290,7 @@ const HomePage = () => {
     <div>
       <h1>Usuario: {user}</h1>
       <h2>Listado de Cupones</h2>
+      <button><Link to="/profile">Ir al Perfil de la Empresa</Link></button>
       <button onClick={openModal}>Agregar Nuevo Cupón</button>
       <button onClick={fetchCupones}>Actualizar tabla</button>
       
@@ -314,7 +327,7 @@ const HomePage = () => {
       {cuponSeleccionado && (
         <Modal2 isOpen={isSecondModalOpen} onClose={closeSecondModal} cupon={cuponSeleccionado} categorias={categorias} user={user} />
       )}
-      <Link to="/profile">Ir al Perfil de la Empresa</Link>
+      
       <button onClick={logout}>Cerrar Sesión</button>
     </div>
   );
