@@ -94,15 +94,15 @@ const Modal = ({ isOpen, onClose, user, categorias}) => {
 const Modal2 = ({ isOpen, onClose, cupon, categorias, user }) => {
   
   const [formData, setFormData] = useState({
-    nombre: cupon.nombre,
-    fechaInicio: cupon.fecha_inicio,
-    fechaVencimiento: cupon.fecha_vencimiento,
-    precio: cupon.precio,
-    estado: cupon.estado,
-    categoria: cupon.categoria,
-    descuento: cupon.descuento,
-    cantidad: cupon.cantidad,
-    image: cupon.image
+    nombre: cupon.nombre || '',
+    fechaInicio: cupon.fecha_inicio || '',
+    fechaVencimiento: cupon.fecha_vencimiento || '',
+    precio: cupon.precio || '',
+    estado: cupon.estado || '1',
+    categoria: cupon.categoria || '',
+    descuento: cupon.descuento || '',
+    cantidad: cupon.cantidad || '',
+    image: cupon.image || ''
   });
 
   const handleSubmit = async (event) => {
@@ -154,14 +154,15 @@ const Modal2 = ({ isOpen, onClose, cupon, categorias, user }) => {
 
   useEffect(() => {
     setFormData({
-      nombre: cupon.nombre,
-      fechaInicio: cupon.fecha_inicio,
-      fechaVencimiento: cupon.fecha_vencimiento,
-      precio: cupon.precio,
-      estado: cupon.estado,
-      descuento: cupon.descuento,
-      categoria: cupon.categoria,
-      cantidad: cupon.cantidad
+      nombre: cupon.nombre || '',
+      fechaInicio: cupon.fecha_inicio || '',
+      fechaVencimiento: cupon.fecha_vencimiento || '',
+      precio: cupon.precio || '',
+      estado: cupon.estado || '1',
+      descuento: cupon.descuento || '',
+      categoria: cupon.categoria || '',
+      cantidad: cupon.cantidad || '',
+      image: cupon.image || ''
     });
   }, [cupon]);
 
